@@ -6,6 +6,10 @@
 基于 SpringBoot2.1 的 互联网 SaaS 敏捷开发框架，包含租户管理、数据源管理 和 子系统管理，可根据需要，为不同租户分配不同的子系统和数据源，蓝本是 ruoyi 易读易懂、界面简洁美观，没有任何重度依赖；
 核心技术采用Spring Boot、MyBatis、Druid、Shiro、JWT、Thymeleaf、Lombok、Fastjson。
 
+###  体验地址：http://113.108.163.210:8849/login
+
+账号密码：admin / admin123    、   test / 123456      
+
 ### 框架说明
 
 1、导入项目之前请先安装 lombok 插件，方法自行百度；
@@ -89,11 +93,7 @@
 
 ### 授权
 使用 AGPLv3 开源，请务必遵守 AGPLv3 的相关条款
-
-
-###  体验地址：http://113.108.163.210:8849/login
-
-账号密码：admin / admin123    、   test / 123456        
+  
 
 ###  更新不易，请喝咖啡
 
