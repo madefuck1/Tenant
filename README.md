@@ -54,15 +54,6 @@
 
 15、连接池监视：监视当前系统数据库连接池状态，可进行分析SQL找出系统性能瓶颈；
 
-###  技术视频分享 （链接: https://pan.baidu.com/s/12rMXHU8CVlb1UqBdcb-Dng 提取码: ri6v ）
-
-1、Java 基础视频
-2、设计模式讲解
-3、系统架构视频
-4、SpringCloud 视频
-5、MongoDB
-
-
 ###  V-2.0.0 租户模式，支持一套系统给多个客户使用（已完成）：
 
 1、子系统管理（配置构成平台的系统/模块）；
@@ -81,7 +72,6 @@
    未登录（没有获取到Token），系统提示：没有找到名为Authorization的header；
    已登录（获取到Token），可正常访问系统中所有的RestController。
 
-
 ###  V-3.0.0 前后端分离版
 
 1、 技术架构改造，计划往Spring Cloud Alibaba方向发展；
@@ -89,7 +79,6 @@
 2、 集成ES作为数据查询中心；
 
 ### 相关资料及数据库脚本请加QQ群：531346979， 点击加入 <a target="_blank" href="//shang.qq.com/wpa/qunwpa?idkey=ccf29a49380e1f1ab94e78e6c818658749ffa73a39aa823822319195fa64172d"><img border="0" src="//pub.idqqimg.com/wpa/images/group.png" alt="Stone快速开发平台" title="Stone快速开发平台"></a>
-
 
 ### 授权
 使用 AGPLv3 开源，请务必遵守 AGPLv3 的相关条款
@@ -103,3 +92,11 @@
 ###  推荐另外一个项目：https://gitee.com/justime/Movie-ElasticSearch-RHLC
 
 对ES客户端进行了轻封装，极大的降低了使用ES搜索引擎的门槛
+
+###  技术视频分享 （链接: https://pan.baidu.com/s/12rMXHU8CVlb1UqBdcb-Dng 提取码: ri6v ）
+
+1、Java 基础视频
+2、设计模式讲解
+3、系统架构视频
+4、SpringCloud 视频
+5、MongoDB
