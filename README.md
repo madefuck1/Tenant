@@ -1,6 +1,8 @@
-# stone 即石头， 喜欢麻烦点个 Star
+# Stone 石头 V2.1.0 - 互联网 SaaS 敏捷开发框架 ，一款免费开源的JAVA互联网云快速开发平台。
 
-#### 介紹
+#### 如果对您有帮助，您可以点右上角 "Star" 支持一下 ，谢谢！
+
+### 介紹
 基于SpringBoot2.1的 SaaS 权限管理系统，包含租户管理、数据源管理 和 子系统管理，可根据需要，为不同租户分配不同的子系统和数据源，蓝本是 ruoyi 易读易懂、界面简洁美观，没有任何重度依赖；
 核心技术采用Spring Boot、MyBatis、Druid、Shiro、JWT、Thymeleaf、Lombok、Fastjson。
 
