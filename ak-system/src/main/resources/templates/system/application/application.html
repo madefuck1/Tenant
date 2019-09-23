@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('系统列表')"/>
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="role-form">
+                <div class="select-list">
+                    <ul>
+                        <li>
+                            系统名称：<input type="text" name="appName"/>
+                        </li>
+                        <li>
+                            <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i
+                                    class="fa fa-search"></i>&nbsp;搜索</a>
+                            <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i
+                                    class="fa fa-refresh"></i>&nbsp;重置</a>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+
+        <div class="btn-group-sm" id="toolbar" role="group">
+            <a class="btn btn-success" onclick="$.operate.addFull()" shiro:hasPermission="system:application:add">
+                <i class="fa fa-plus"></i> 新增
+            </a>
+            <a class="btn btn-primary single disabled" onclick="$.operate.editFull()"
+               shiro:hasPermission="system:application:edit">
+                <i class="fa fa-edit"></i> 修改
+            </a>
+            <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="system:application:export">
+                <i class="fa fa-download"></i> 导出
+            </a>
+        </div>
+
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table" data-mobile-responsive="true"></table>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer"/>
+<script th:inline="javascript">
+    var editFlag = [[${@permission.hasPermi('system:application:edit')}]];
+    var removeFlag = [[${@permission.hasPermi('system:application:remove')}]];
+    var types = [[${@dict.getType('sys_application_type')}]];
+    var prefix = ctx + "system/application";
+
+
+    $(function () {
+        var options = {
+            url: prefix + "/list",
+            createUrl: prefix + "/add",
+            updateUrl: prefix + "/edit/{id}",
+            removeUrl: prefix + "/remove",
+            exportUrl: prefix + "/export",
+            modalName: "系统",
+            columns: [{
+                field: 'selectItem',
+                radio: true
+            },
+                {
+                    field: 'appCode',
+                    title: '系统编号'
+                },
+                {
+                    field: 'appName',
+                    title: '系统名称',
+                },
+                {
+                    field: 'appUri',
+                    title: '访问地址',
+                },
+                {
+                    field: 'appType',
+                    title: '类别',
+                    align: 'center',
+                    formatter: function (value, row, index) {
+                        return $.table.selectDictLabel(types, value);
+                    }
+                },
+                {
+                    field: 'appAddress',
+                    title: '应用部署地址',
+                },
+                {
+                    visible: editFlag == 'hidden' ? false : true,
+                    title: '系统状态',
+                    align: 'center',
+                    formatter: function (value, row, index) {
+                        return statusTools(row);
+                    }
+                },
+                {
+                    field: 'createTime',
+                    title: '创建时间',
+                    sortable: true
+                },
+                {
+                    title: '操作',
+                    align: 'center',
+                    formatter: function (value, row, index) {
+                        var actions = [];
+                        actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.editFull(\'' + row.appCode + '\')"><i class="fa fa-edit"></i>编辑</a> ');
+                        actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.appCode + '\')"><i class="fa fa-remove"></i>删除</a> ');
+                        return actions.join('');
+                    }
+                }]
+        };
+        $.table.init(options);
+    });
+
+
+    /* 角色状态显示 */
+    function statusTools(row) {
+        //console.log(row)
+        if (row.status == 1) {
+            return '<i class=\"fa fa-toggle-off text-info fa-2x\" onclick="enable(\'' + row.appCode + '\')"></i> ';
+        } else {
+            return '<i class=\"fa fa-toggle-on text-info fa-2x\" onclick="disable(\'' + row.appCode + '\')"></i> ';
+        }
+    }
+
+    /* 角色管理-停用 */
+    function disable(appCode) {
+        $.modal.confirm("确认要停用系统吗？", function () {
+            $.operate.post(prefix + "/changeStatus", {"appCode": appCode, "status": 1});
+        })
+    }
+
+    /* 角色管理启用 */
+    function enable(appCode) {
+        $.modal.confirm("确认要启用系统吗？", function () {
+            $.operate.post(prefix + "/changeStatus", {"appCode": appCode, "status": 0});
+        })
+    }
+
+</script>
+</body>
+</html>

@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <head>
+        <th:block th:include="include :: header('新增系统')"/>
+        <th:block th:include="include :: select2-css"/>
+    </head>
+</head>
+
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+    <form class="form-horizontal m" id="form-application-add">
+        <input id="appName" name="appName" type="hidden">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label"><span style="color: red; ">*</span>子系统：</label>
+                    <div class="col-sm-10">
+                        <select id="appCode" name="appCode" class="form-control m-b" required
+                                onchange="setAppName(this)">
+                            <option value="">===请选择===</option>
+                            <option th:each="enmu : ${T(com.ak.common.enums.TenantApplication).values()}"
+                                    th:value="${enmu.code}" th:text="${enmu.info}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label"><span style="color: red; ">*</span>系统类型：</label>
+                    <div class="col-sm-8">
+                        <select name="appType" class="form-control m-b"
+                                th:with="type=${@dict.getType('sys_application_type')}">
+                            <option th:each="appType : ${type}" th:text="${appType.dictLabel}"
+                                    th:value="${appType.dictValue}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label"><span style="color: red; ">*</span>访问地址：</label>
+                    <div class="col-sm-8">
+                        <input name="appUri" placeholder="请输入应用部署地址" class="form-control" type="text" required
+                               autocomplete="off"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-xs-4 control-label"><span style="color: red; ">*</span>应用部署地址：</label>
+                    <div class="col-xs-8">
+                        <input name="appAddress" maxlength="255" class="form-control" rows="3" autocomplete="off"
+                               required/>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">序号：</label>
+                    <div class="col-sm-8">
+                        <input name="sort" placeholder="请输入序号" class="form-control" type="text" autocomplete="off">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-xs-2 control-label">备注：</label>
+                    <div class="col-xs-10">
+                        <textarea name="remark" maxlength="500" class="form-control" rows="3"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<th:block th:include="include :: footer"/>
+<script>
+    var prefix = ctx + "system/application";
+
+    function submitHandler() {
+        if ($.validate.form()) {
+            var data = $("#form-application-add").serializeArray();
+            $.operate.save(prefix + "/add", data);
+        }
+    }
+
+    $("#form-application-add").validate({
+        onkeyup: false,
+        rules: {
+            appCode: {
+                remote: {
+                    url: prefix + "/checkAppCodeUnique",
+                    type: "post",
+                    dataType: "json",
+                    data: {
+                        name: function () {
+                            return $.common.trim($("#appCode").val());
+                        }
+                    },
+                    dataFilter: function (data, type) {
+                        return $.validate.unique(data);
+                    }
+                }
+            },
+        },
+        messages: {
+            "appCode": {
+                remote: "子系统已存在，请勿重复配置"
+            }
+        },
+        focusCleanup: true
+    });
+
+    function setAppName(selectItem) {
+        $("#appName").val(selectItem.selectedOptions[0].innerText);
+    }
+</script>
+</body>
+</html>

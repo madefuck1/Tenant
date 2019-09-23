@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ak.platform.mapper.system.SysDatasourceApplicationMapper">
+
+    <resultMap type="SysDatasourceApplication" id="SysDatasourceApplicationResult">
+        <result property="datasourceCode" column="datasource_code"/>
+        <result property="appCode" column="app_code"/>
+    </resultMap>
+
+    <select id="getDatasourceApplicationByDatasourceCode" resultMap="SysDatasourceApplicationResult"
+            parameterType="String">
+		select datasource_code,  app_code from sys_datasource_application where datasource_code = #{datasourceCode}
+	</select>
+
+    <delete id="deleteDatasourceApplication">
+        delete from sys_datasource_application
+        <where>
+            <if test="datasourceCode != null and datasourceCode != ''">
+                and datasource_code = #{datasourceCode}
+            </if>
+            <if test="appCode != null and appCode != ''">
+                and app_code = #{appCode}
+            </if>
+        </where>
+    </delete>
+
+    <insert id="batchDatasourceApplication" parameterType="java.util.List">
+        insert into sys_datasource_application(datasource_code, app_code) values
+        <foreach collection="datasourceApplications" item="l" index="index" separator=",">
+            (#{l.datasourceCode}, #{l.appCode})
+        </foreach>
+    </insert>
+
+</mapper>

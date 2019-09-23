@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('租户列表')"/>
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="tenant-form">
+                <div class="select-list">
+                    <ul>
+                        <li>
+                            租户名称：<input type="text" name="tenantName"/>
+                        </li>
+                        <li>
+                            联系人：<input type="text" name="contactMan"/>
+                        </li>
+                        <li>
+                            <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i
+                                    class="fa fa-search"></i>&nbsp;搜索</a>
+                            <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i
+                                    class="fa fa-refresh"></i>&nbsp;重置</a>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+
+        <div class="btn-group-sm" id="toolbar" role="group">
+            <a class="btn btn-success" onclick="$.operate.addFull()" shiro:hasPermission="system:tenant:add">
+                <i class="fa fa-plus"></i> 新增
+            </a>
+            <a class="btn btn-primary single disabled" onclick="$.operate.editFull()"
+               shiro:hasPermission="system:tenant:edit">
+                <i class="fa fa-edit"></i> 修改
+            </a>
+            <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="system:tenant:export">
+                <i class="fa fa-download"></i> 导出
+            </a>
+        </div>
+
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table" data-mobile-responsive="true"></table>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer"/>
+<script th:inline="javascript">
+    var editFlag = [[${@permission.hasPermi('system:tenant:edit')}]];
+    var removeFlag = [[${@permission.hasPermi('system:tenant:remove')}]];
+    var prefix = ctx + "system/tenant";
+
+    $(function () {
+        var options = {
+            url: prefix + "/list",
+            createUrl: prefix + "/add",
+            updateUrl: prefix + "/edit/{id}",
+            removeUrl: prefix + "/remove",
+            exportUrl: prefix + "/export",
+            modalName: "租户",
+            sortName: "tenantCode",
+            columns: [{
+                field: 'selectItem',
+                radio: true
+            },
+                {
+                    field: 'tenantCode',
+                    title: '租户编号'
+                },
+                {
+                    field: 'tenantName',
+                    title: '租户名称',
+                    sortable: true
+                },
+                {
+                    field: 'contactMan',
+                    title: '联系人',
+                    sortable: true
+                },
+                {
+                    field: 'contactNumber',
+                    title: '手机号码',
+                    sortable: true
+                },
+                {
+                    visible: editFlag == 'hidden' ? false : true,
+                    title: '租户状态',
+                    align: 'center',
+                    formatter: function (value, row, index) {
+                        return statusTools(row);
+                    }
+                },
+                {
+                    field: 'createTime',
+                    title: '创建时间',
+                    sortable: true
+                },
+                {
+                    title: '操作',
+                    align: 'center',
+                    formatter: function (value, row, index) {
+                        if (row.tenantCode != '000000') {
+                            var actions = [];
+                            actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.editFull(\'' + row.tenantCode + '\')"><i class="fa fa-edit"></i>编辑</a> ');
+                            actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.tenantCode + '\')"><i class="fa fa-remove"></i>删除</a> ');
+                            actions.push('<a class="btn btn-info btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="authApplication(\'' + row.tenantCode + '\')"><i class="fa fa-user"></i>分配子系统</a> ');
+                            return actions.join('');
+                        } else {
+                            return "";
+                        }
+                    }
+                }]
+        };
+        $.table.init(options);
+    });
+
+
+    /* 租户状态显示 */
+    function statusTools(row) {
+        if (row.status == 1) {
+            return '<i class=\"fa fa-toggle-off text-info fa-2x\" onclick="enable(\'' + row.tenantCode + '\')"></i> ';
+        } else {
+            return '<i class=\"fa fa-toggle-on text-info fa-2x\" onclick="disable(\'' + row.tenantCode + '\')"></i> ';
+        }
+    }
+
+    /* 租户管理-停用 */
+    function disable(tenantCode) {
+        $.modal.confirm("确认要停用租户吗？", function () {
+            $.operate.post(prefix + "/changeStatus", {"tenantCode": tenantCode, "status": 1});
+        })
+    }
+
+    /* 租户管理启用 */
+    function enable(tenantCode) {
+        $.modal.confirm("确认要启用租户吗？", function () {
+            $.operate.post(prefix + "/changeStatus", {"tenantCode": tenantCode, "status": 0});
+        })
+    }
+
+    /* 租户管理-分配子系统 */
+    function authApplication(tenantCode) {
+        var url = prefix + '/authApplication/' + tenantCode;
+        $.modal.open("分配子系统", url);
+    }
+</script>
+</body>
+</html>

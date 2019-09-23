@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('租户子系统')"/>
+    <th:block th:include="include :: select2-css"/>
+</head>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+    <form class="form-horizontal m" id="form-datasourceApplication-edit">
+        <input type="hidden" id="appCodesOld" name="appCodesOld" th:value="${appCodesOld}">
+        <div class="form-group">
+            <label class="col-sm-3 control-label ">数据源编码：</label>
+            <div class="col-sm-8">
+                <input class="form-control" type="text" name="datasourceCode" id="datasourceCode"
+                       th:value="${datasourceCode}" readonly="true"/>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label ">子系统：</label>
+            <div class="col-sm-8">
+                <select id="appCode" name="appCode" class="form-control select2-multiple"
+                        data-none-selected-text="请选择子系统" multiple>
+                    <option th:each="app:${applications}"
+                            th:value="${app.appCode}"
+                            th:text="${app.appName}"
+                            th:disabled="${app.status == '1'}"
+                            th:selected="${app.flag}">
+                    </option>
+                </select>
+            </div>
+        </div>
+    </form>
+</div>
+<th:block th:include="include :: footer"/>
+<th:block th:include="include :: select2-js"/>
+<script type="text/javascript">
+
+    function submitHandler() {
+        if ($.validate.form()) {
+            edit();
+        }
+    }
+
+    function edit() {
+        var appCodesNew = $("#appCode").val();
+        console.log(appCodesNew)
+        console.log($("#appCodesOld").val())
+        if (!appCodesNew) {
+            $.modal.alertWarning("请至少选择一个系统");
+            return;
+        } else {
+            $.ajax({
+                cache: true,
+                type: "POST",
+                url: ctx + "system/datasource/setApplication",
+                dataType: "json",
+                contentType: 'application/json;charset=utf-8',
+                data: JSON.stringify({
+                    "datasourceCode": $("#datasourceCode").val(),
+                    "appCodesNew": appCodesNew,
+                    "appCodesOld": $("#appCodesOld").val()
+                }),
+                async: false,
+                error: function (request) {
+                    $.modal.alertError("系统错误");
+                },
+                success: function (data) {
+                    $.operate.successCallback(data);
+                }
+            });
+        }
+    }
+
+</script>
+</body>
+</html>

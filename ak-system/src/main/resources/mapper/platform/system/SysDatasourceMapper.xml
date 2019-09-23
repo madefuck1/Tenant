@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ak.platform.mapper.system.SysDatasourceMapper">
+
+    <resultMap type="SysDatasource" id="SysDatasourceResult">
+        <result property="datasourceCode" column="datasource_code"/>
+        <result property="databaseIp" column="database_ip"/>
+        <result property="databasePort" column="database_port"/>
+        <result property="databaseDriverClassName" column="database_driver_class_name"/>
+        <result property="databaseName" column="database_name"/>
+        <result property="databaseUsername" column="database_username"/>
+        <result property="databasePassword" column="database_password"/>
+        <result property="databaseFlag" column="database_flag"/>
+        <result property="tenantCode" column="tenant_code"/>
+        <result property="status" column="status"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="delFlag" column="del_flag"/>
+        <result property="remark" column="remark"/>
+        <association property="tenant" column="tenant_code" javaType="SysTenant" resultMap="tenantResult"/>
+    </resultMap>
+
+    <resultMap id="tenantResult" type="SysTenant">
+        <id property="tenantCode" column="tenant_code"/>
+        <result property="tenantName" column="tenant_name"/>
+        <result property="contactMan" column="contact_man"/>
+        <result property="contactNumber" column="contact_number"/>
+        <result property="address" column="address"/>
+        <result property="status" column="status"/>
+    </resultMap>
+
+    <sql id="selectDatasourceVo">
+        select d.datasource_code, d.database_ip, d.database_port, d.database_driver_class_name, d.database_name, d.database_username,
+		d.database_password, d.database_flag, d.tenant_code, d.status, d.create_by, d.create_time, d.update_by, d.update_time, d.remark,
+		t.tenant_code, t.tenant_name, t.contact_man, t.contact_number, t.address
+		from sys_datasource d
+		left join sys_tenant t on t.tenant_code = d.tenant_code
+    </sql>
+
+    <select id="queryByTenant" resultMap="SysDatasourceResult">
+        <include refid="selectDatasourceVo"/>
+        where d.del_flag = '0' and d.tenant_code = #{tenantCode}
+    </select>
+
+    <select id="selectByDatasourceCode" parameterType="String" resultMap="SysDatasourceResult">
+        <include refid="selectDatasourceVo"/>
+        where d.del_flag = '0' and d.datasource_code = #{datasourceCode}
+    </select>
+
+    <select id="selectDatasourceList" parameterType="SysDatasource" resultMap="SysDatasourceResult">
+        <include refid="selectDatasourceVo"/>
+        where d.del_flag = '0'
+        <if test="tenantCode != null and tenantCode != ''">
+            and d.tenant_code = #{tenantCode}
+        </if>
+
+    </select>
+
+    <insert id="insertDatasource" parameterType="SysDatasource">
+        insert into sys_datasource (
+        <if test="datasourceCode != null and datasourceCode != '' ">datasource_code,</if>
+        <if test="databaseIp != null and databaseIp != '' ">database_ip,</if>
+        <if test="databasePort != null and databasePort != '' ">database_port,</if>
+        <if test="databaseDriverClassName != null and databaseDriverClassName != '' ">database_driver_class_name,</if>
+        <if test="databaseName != null and databaseName != ''">database_name,</if>
+        <if test="databaseUsername != null and databaseUsername != ''">database_username,</if>
+        <if test="databasePassword != null and databasePassword != ''">database_password,</if>
+        <if test="databaseFlag != null and databaseFlag != ''">database_flag,</if>
+        <if test="tenantCode != null and tenantCode != ''">tenant_code,</if>
+        <if test="status != null and status != ''">status,</if>
+        <if test="remark != null and remark != ''">remark,</if>
+        <if test="createBy != null and createBy != ''">create_by,</if>
+        create_time
+        )values(
+        <if test="datasourceCode != null and datasourceCode != '' ">#{datasourceCode},</if>
+        <if test="databaseIp != null and databaseIp != '' ">#{databaseIp},</if>
+        <if test="databasePort != null and databasePort != '' ">#{databasePort},</if>
+        <if test="databaseDriverClassName != null and databaseDriverClassName != '' ">#{databaseDriverClassName},</if>
+        <if test="databaseName != null and databaseName != ''">#{databaseName},</if>
+        <if test="databaseUsername != null and databaseUsername != ''">#{databaseUsername},</if>
+        <if test="databasePassword != null and databasePassword != ''">#{databasePassword},</if>
+        <if test="databaseFlag != null and databaseFlag != ''">#{databaseFlag},</if>
+        <if test="tenantCode != null and tenantCode != ''">#{tenantCode},</if>
+        <if test="status != null and status != ''">#{status},</if>
+        <if test="remark != null and remark != ''">#{remark},</if>
+        <if test="createBy != null and createBy != ''">#{createBy},</if>
+        sysdate()
+        )
+    </insert>
+
+    <update id="updateDatasource" parameterType="SysDatasource">
+        update sys_datasource
+        <set>
+            <if test="databaseIp != null and databaseIp != ''">database_ip = #{databaseIp},</if>
+            <if test="databasePort != null and databasePort != ''">database_port = #{databasePort},</if>
+            <if test="databaseDriverClassName != null and databaseDriverClassName != ''">database_driver_class_name =
+                #{databaseDriverClassName},
+            </if>
+            <if test="databaseName != null and databaseName != ''">database_name = #{databaseName},</if>
+            <if test="databaseUsername != null and databaseUsername != ''">database_username = #{databaseUsername},</if>
+            <if test="databasePassword != null and databasePassword != ''">database_password = #{databasePassword},</if>
+            <if test="databaseFlag != null and databaseFlag != ''">database_flag = #{databaseFlag},</if>
+            <if test="status != null and status != ''">status = #{status},</if>
+            <if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="tenantCode != null and tenantCode != ''">tenant_code = #{tenantCode},</if>
+            <if test="remark != null and remark != ''">remark = #{remark},</if>
+            update_time = sysdate()
+        </set>
+        where datasource_code = #{datasourceCode}
+    </update>
+
+    <delete id="deleteDatasourceByCodes" parameterType="String">
+        update sys_datasource set del_flag = '2' where datasource_code in
+        <foreach item="datasourceCode" collection="array" open="(" separator="," close=")">
+            #{datasourceCode}
+        </foreach>
+    </delete>
+
+    <select id="checkDatasourceCodeUnique" parameterType="String" resultType="int">
+		select count(1) from sys_datasource where datasource_code = #{datasourceCode}
+	</select>
+</mapper>

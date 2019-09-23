@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ak.platform.mapper.system.SysTenantApplicationMapper">
+
+    <resultMap type="SysTenantApplication" id="SysTenantApplicationResult">
+        <result property="tenantCode" column="tenant_code"/>
+        <result property="appCode" column="app_code"/>
+    </resultMap>
+
+    <select id="getTenantApplicationByTenantCode" resultMap="SysTenantApplicationResult" parameterType="String">
+		select tenant_code, app_code from sys_tenant_application where tenant_code = #{tenantCode}
+	</select>
+
+    <delete id="deleteTenantApplicationByTenantCode">
+        delete from sys_tenant_application
+        <where>
+            <if test="tenantCode != null and tenantCode != ''">
+                and tenant_code = #{tenantCode}
+            </if>
+            <if test="appCode != null and appCode != ''">
+                and app_code = #{appCode}
+            </if>
+        </where>
+    </delete>
+
+    <insert id="batchTenantApplication">
+        insert into sys_tenant_application(tenant_code,app_code)
+        values
+        <foreach item="appCode" index="index" collection="appCodes" separator=",">
+            (#{tenantCode},#{appCode})
+        </foreach>
+    </insert>
+
+</mapper>
